@@ -9,8 +9,12 @@ import (
 )
 
 type (
-	Starter interface{ Start() error }
-	Stopper interface{ Stop() error }
+	Starter interface {
+		Start(ctx context.Context) error
+	}
+	Stopper interface {
+		Stop(ctx context.Context) error
+	}
 )
 
 // Launcher interface determines the way to gracefully merge Starter and Stopper functionality.
@@ -47,7 +51,7 @@ func (l *launcher) Launch() error {
 
 	if l.starter != nil {
 		go func() {
-			if startErr := l.starter.Start(); startErr != nil {
+			if startErr := l.starter.Start(l.ctx); startErr != nil {
 				err = fmt.Errorf("starter.Start: %w", startErr)
 				l.cancel()
 			}
@@ -64,7 +68,7 @@ func (l *launcher) Launch() error {
 		<-l.ctx.Done()
 
 		go func() {
-			if stopErr := l.stopper.Stop(); stopErr != nil {
+			if stopErr := l.stopper.Stop(l.ctx); stopErr != nil {
 				errCh <- fmt.Errorf("stopper.Stop: %w", stopErr)
 				return
 			}
@@ -92,12 +96,12 @@ func (l *launcher) Launch() error {
 
 func (l *launcher) WaitStart() {
 	for !l.started.Load() {
-		continue
+		time.Sleep(time.Second / 2)
 	}
 }
 
 func (l *launcher) WaitStop() {
 	for !l.stopped.Load() {
-		continue
+		time.Sleep(time.Second / 2)
 	}
 }

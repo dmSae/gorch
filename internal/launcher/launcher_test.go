@@ -12,7 +12,7 @@ type testStarter struct {
 	done bool
 }
 
-func (ts *testStarter) Start() error {
+func (ts *testStarter) Start(ctx context.Context) error {
 	ts.done = true
 
 	return nil
@@ -22,7 +22,7 @@ type testStopper struct {
 	done bool
 }
 
-func (ts *testStopper) Stop() error {
+func (ts *testStopper) Stop(ctx context.Context) error {
 	ts.done = true
 
 	return nil
