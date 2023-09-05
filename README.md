@@ -43,11 +43,11 @@ type YourService struct {
     // Your service implementation
 }
 
-func (s *YourService) Start() error {
+func (s *YourService) Start(ctx context.Context) error {
     // Your start logic
 }
 
-func (s *YourService) Stop() error {
+func (s *YourService) Stop(ctx context.Context) error {
     // Your graceful shutdown logic
 }
 ```
